@@ -1,0 +1,14 @@
+<identifier> [a-zA-Z#_$][a-zA-Z#_$]*
+
+<type>       <primitive> | <pointer>
+
+<pointer>    @<identifier>
+
+<primitive>  ((i|u)(8|16|32|64)) |  f(32|64)
+
+<function>   func <identifier>((<identifier>: <type>),*)
+    (<statement>)*
+end
+
+<statement>   (<identifier> = )? <expression>
+<expression> <identifier>((<expression>)*)

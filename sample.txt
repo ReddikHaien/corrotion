@@ -1,0 +1,48 @@
+export template Test
+    A: i32,
+    B: i32,
+end
+
+export data test: @<Test>
+
+export func test(a: i32, b: i32) -> i32
+    
+    block yes(a: i32, b: i32) -> i32
+        write(&test, alloc(Test, add(a, 5), sub(b, 20)))
+        mul(a, b)
+        return mul(a, b)
+    end 
+
+    block no(a: i32, b: i32) -> i32
+        div(a, b)
+    end
+
+    c = branch(
+        eq(a, b),
+        yes(a, b),
+        no(a, b)
+        )
+
+    return c;
+end
+
+export func get_Test#A() -> i32
+    unpack(&test)
+        test_a = Test::A
+    end
+    return test_a
+end
+
+export func write_Test#A(a: i32)
+    pack(&test)
+        Test::A = a
+    end
+end
+
+export func raw_rw(a: i32) -> i32
+    Test#A_index = index_of(Test::A)
+
+    test_a = read(&test, Test#A_index)
+    write(&test, Test#A_index, a)
+
+end
