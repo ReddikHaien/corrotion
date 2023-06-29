@@ -1,18 +1,10 @@
 [package]
-name = "corrotion"
+name = "java-corrosion"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cranelift = "0.97.1"
-cranelift-jit = "0.97.1"
-cranelift-module = "0.97.1"
 peg = "0.8.1"
-
-
-[workspace]
-members = [
-    "java-corrosion"
-]
+zip = "0.6.6"

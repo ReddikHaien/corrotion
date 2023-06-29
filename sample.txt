@@ -46,3 +46,69 @@ export func raw_rw(a: i32) -> i32
     write(&test, Test#A_index, a)
 
 end
+
+
+func hmm () -> i32, f32
+
+local_a, local_b, local_c = define_locals()
+
+    entry(value: i32, banana: f32)
+        branch_case(eq(value,ftoi(banana)), 
+                    yes(value, banana),
+                    no (value, banana)
+        )
+    end
+
+    block yes(value: i32, banana: f32)
+        return(add(value,i32(2)), mul(banana, f32(6.7)))
+    end
+end
+
+end
+
+export func noe_greier -> noe_greier#entry()
+
+block entry(a: i32, b: i32) -> i32
+
+end
+
+func noe_greier(a: i32, b: i32)
+    locals c: i32, d: i32
+    entry
+        set_local(c, add(get_local(a), i32(123)))
+        
+        set_local(d, mul(get_local(b), get_local(c)))
+
+        
+    end
+
+    block b0()
+        br_if(gt(get_local(a), 10), b2, b1) 
+    end
+
+    block b1()
+        set_local(a, add(get_local(a), i32((1))))
+        br(b0)
+    end
+    block b2()
+        return()
+    end
+
+end
+
+func failable(this: @<Test>, a: i32) -> (i32, @<Exception>)
+{
+    excpetion_handler = (exception: @<Exception>){
+        return (i32(0), exception)
+    }
+
+    
+    i0, e0 = get_field(this, Test#A#index)
+    br_if(ne(e0, 0), excpetion_handler, 
+    (){
+        
+    })
+    
+
+
+}
