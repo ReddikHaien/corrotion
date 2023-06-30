@@ -8,12 +8,13 @@ fn main() {
     let mut archive = ZipArchive::new(File::open("./jagexappletviewer.jar").unwrap()).unwrap();
 
     for file in 0..archive.len(){
-        let file = archive.by_index(file).unwrap();
+        let mut file = archive.by_index(file).unwrap();
         if file.name().ends_with(".class"){
-            println!("{}", file.name())
+            println!("{}", file.name());
             let mut buffer = Vec::with_capacity(file.size() as usize);
-            file.read_to_end(&mut buffer);
+            file.read_to_end(&mut buffer).unwrap();
+            let class = frontend::class_parser::class_file(&buffer).unwrap();
+            println!("\t{}",class);
         }
     }
-    
 }
