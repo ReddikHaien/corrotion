@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::{fs::File, io::Read};
 
 use zip::ZipArchive;
 
@@ -11,7 +11,9 @@ fn main() {
         let file = archive.by_index(file).unwrap();
         if file.name().ends_with(".class"){
             println!("{}", file.name())
+            let mut buffer = Vec::with_capacity(file.size() as usize);
+            file.read_to_end(&mut buffer);
         }
     }
-    println!("Hello, world!");
+    
 }
