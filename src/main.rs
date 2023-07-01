@@ -1,6 +1,7 @@
 use std::fs;
 
 use corrosion_base::{ModuleBuilder, Type};
+use corrosion_clif::Generator;
 
 fn main() {
     let mut mb = ModuleBuilder::new();
@@ -22,6 +23,14 @@ fn main() {
 
     let module = mb.build();
 
+    let mid = module.id;
+    let fid = module.functions[0].id;
+    
+    let mut generator = Generator::new();
 
-    println!("{:#?}",module);    
+    generator.load_module(module);
+
+    let ptr_b = unsafe { std::mem::transmute::<_, extern "C" fn(f32, f32) -> f32>(generator.get_function(mid, fid)) };
+
+    println!("{}",ptr_b(5.0, 8.0));
 }

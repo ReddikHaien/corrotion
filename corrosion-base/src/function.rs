@@ -48,6 +48,7 @@ impl Type{
 #[derive(Debug)]
 pub struct Function{
     pub id: FunctionRef,
+    pub name: String,
     pub inputs: Vec<Type>,
     pub locals: Vec<(VariableRef, Type)>,
     pub outputs: Vec<Type>,
@@ -58,6 +59,7 @@ pub struct Function{
 impl Function{
     pub(crate) fn new(id: FunctionRef) -> Self{
         Self{
+            name: String::with_capacity(0),
             blocks: Vec::new(),
             entry: BlockRef(0),
             id,
@@ -236,4 +238,24 @@ pub enum Operation{
 pub struct Instruction{
     pub(crate) operation: Operation,
     pub(crate) output: Vec<ImmediateRef>,
+}
+
+impl Instruction{
+    pub fn operation(&self) -> &Operation{
+        &self.operation
+    }
+
+    pub fn immediates(&self) -> &[ImmediateRef]{
+        &self.output
+    }
+
+    pub fn assert_1_immediate(&self) -> ImmediateRef{
+        assert!(self.immediates().len() == 1, "Expected only 1 immediate, not {}",self.immediates().len());
+        self.immediates()[0]
+    }
+
+    pub fn assert_2_immediates(&self) -> (ImmediateRef, ImmediateRef){
+        assert!(self.immediates().len() == 2, "Expected exactly 2 immediates, not {}",self.immediates().len());
+        (self.immediates()[0], self.immediates()[1])
+    }
 }

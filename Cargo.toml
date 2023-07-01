@@ -6,9 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cranelift = "0.97.1"
-cranelift-jit = "0.97.1"
-cranelift-module = "0.97.1"
 corrosion-base = { path="corrosion-base", version="0.1.0" }
 corrosion-clif = { path="corrosion-clif", version="0.1.0" }
 

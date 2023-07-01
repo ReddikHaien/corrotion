@@ -20,7 +20,7 @@ impl ModuleBuilder{
         id
     }
 
-    pub fn funtion_builder<'a>(&'a mut self, function: FunctionRef) -> FunctionBuilder<'a>{
+    pub fn funtion_builder<'a>(&'a mut self, function: FunctionRef) -> FunctionBuilder<'_>{
         FunctionBuilder{
             function,
             module: self,
@@ -44,7 +44,7 @@ pub struct FunctionBuilder<'a>{
 }
 
 impl<'a> FunctionBuilder<'a>{
-    pub fn new(function: FunctionRef, module: &'a mut ModuleBuilder) -> FunctionBuilder<'_> {
+    pub fn new(function: FunctionRef, module: &'a mut ModuleBuilder) -> FunctionBuilder<'a> {
         Self{
             function,
             module,
@@ -267,3 +267,12 @@ impl<'a> BlockBuilder<'a>{
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Debug, Hash)]
 pub struct Value(ImmediateRef, Type);
 
+impl Value{
+    pub fn immediate(self) -> ImmediateRef{
+        self.0
+    }
+
+    pub fn type_(self) -> Type{
+        self.1
+    }
+}
