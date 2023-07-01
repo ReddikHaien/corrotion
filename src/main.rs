@@ -1,21 +1,27 @@
 use std::fs;
 
-pub mod frontend;
-pub mod parser;
+use corrosion_base::{ModuleBuilder, Type};
 
 fn main() {
-    let src = fs::read_to_string("./test.txt");
+    let mut mb = ModuleBuilder::new();
+    let f_a = mb.new_function();
+    let mut fb = mb.funtion_builder(f_a);
 
-    let src = match src {
-        Ok(s) => s,
-        Err(e) => panic!("{}",e),
-    };
+    fb.add_input(Type::F32);
+    fb.add_input(Type::F32);
+    fb.add_output(Type::F32);
+    let block = fb.create_block();
 
-    let module = match frontend::file_parser::module(&src){
-        Ok(module) => module,
-        Err(e) => panic!("{}",e),
-    };
+    let mut bb = fb.block_builder(block);
+    bb.into_entry_block();
 
-    println!("{:#?}", module)
+    let [a, b] = *bb.get_params() else {unreachable!("Entry block should have 2 values")};
+    
+    let out = bb.add_values(a, b);
+    bb.return_(&[out]);
 
+    let module = mb.build();
+
+
+    println!("{:#?}",module);    
 }

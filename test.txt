@@ -1,3 +1,17 @@
-export func banana(a: i32, b: i32, c: i32, d: i32) -> i32{
-    
-}
+corrosion-cs ---|
+corrosion-java ---> corrosion-base <----\
+        ^            ^                  |
+        |            |                  |
+        ------------corrosion-------> corrosion-clif
+
+corrosion-base
+    base types used for defining an application
+
+corrosion-clif
+    crate for converting an application to cranelift
+
+corrosion
+    base binary for executing applications
+
+corrosion-(java, cs, ...)
+    frontends for parsing the respective applications to the base types
