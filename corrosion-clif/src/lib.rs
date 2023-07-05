@@ -6,7 +6,8 @@ use cranelift_module::{default_libcall_names, FuncId, Module, Linkage};
 
 pub struct Generator{
     module: JITModule,
-    functions: HashMap<(ModuleRef, FunctionRef), FunctionDeclaration>
+    functions: HashMap<(ModuleRef, FunctionRef), FunctionDeclaration>,
+    var_counter: u32,
 }
 
 impl Generator{
@@ -15,7 +16,8 @@ impl Generator{
         builder.hotswap(true);
         Self{
             module: JITModule::new(builder),
-            functions: HashMap::new()
+            functions: HashMap::new(),
+            var_counter: 0
         }
     }
 
@@ -41,7 +43,14 @@ impl Generator{
                     let block_id = b_ctx.create_block();
                     block_map.insert(block.label, block_id);
                 }
-                let block_map = block_map;
+
+                let mut locals = HashMap::new();
+
+                for (var, type_) in &function.locals {
+                    let var_ = Variable::from_u32(self.var_counter);
+                    b_ctx.declare_var(var_, from_base_type(*type_));
+                    locals.insert(*var, var_);
+                }
 
                 for b in &function.blocks{
                     let block = block_map[&b.label];
@@ -169,20 +178,35 @@ impl Generator{
                                 let output = instruction.assert_1_immediate();
                                 values.insert(output, value);
                             }
-                            corrosion_base::Operation::LoadLocal(var) => todo!(),
-                            corrosion_base::Operation::StoreLocal(_, _) => todo!(),
-                            corrosion_base::Operation::ReadI8(_) => todo!(),
-                            corrosion_base::Operation::ReadI16(_) => todo!(),
-                            corrosion_base::Operation::ReadI32(_) => todo!(),
-                            corrosion_base::Operation::ReadI64(_) => todo!(),
-                            corrosion_base::Operation::ReadF32(_) => todo!(),
-                            corrosion_base::Operation::ReadF64(_) => todo!(),
-                            corrosion_base::Operation::WriteI8(_) => todo!(),
-                            corrosion_base::Operation::WriteI16(_) => todo!(),
-                            corrosion_base::Operation::WriteI32(_) => todo!(),
-                            corrosion_base::Operation::WriteI64(_) => todo!(),
-                            corrosion_base::Operation::WriteF32(_) => todo!(),
-                            corrosion_base::Operation::WriteF64(_) => todo!(),
+                            corrosion_base::Operation::LoadLocal(var) => {
+                                let var_ = locals.get(var).unwrap();
+                                let value = b_ctx.use_var(*var_);
+                                let output = instruction.assert_1_immediate();
+                                values.insert(output, value);
+                            },
+                            corrosion_base::Operation::StoreLocal(var, value) => {
+                                let var_ = locals.get(var).unwrap();
+                                b_ctx.def_var(*var_, values[value]);
+                                instruction.assert_no_immediates();
+                            },
+                            corrosion_base::Operation::Read(ptr, type_, aligned) => {
+                                let ptr = values[ptr];
+                                let output = instruction.assert_1_immediate();
+                                
+                                let mut flags = MemFlags::new().with_heap();
+                                if *aligned{ flags.set_aligned(); }
+                                let value = b_ctx.ins().load(from_base_type(*type_), flags, ptr, 0);
+
+                                values.insert(output, value);
+                            },
+                            corrosion_base::Operation::Write(ptr, value, aligned) => {
+                                let ptr = values[ptr];
+                                let value = values[value];
+
+                                let mut flags = MemFlags::new().with_heap();
+                                if *aligned{ flags.set_aligned();}
+                                b_ctx.ins().store(flags, ptr, value, 0);
+                            },
                             corrosion_base::Operation::BranchIfEq(_, _, _) => todo!(),
                             corrosion_base::Operation::BranchIfNe(_, _, _) => todo!(),
                             corrosion_base::Operation::BranchIfLt(_, _, _) => todo!(),

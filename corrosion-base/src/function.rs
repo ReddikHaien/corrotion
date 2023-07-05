@@ -151,53 +151,12 @@ pub enum Operation{
     StoreLocal(VariableRef, ImmediateRef),
 
     ///
-    /// Read a 8 bit integer from memory
-    ReadI8(ImmediateRef),
+    /// Read a value of the provided type
+    Read(ImmediateRef, Type, bool),
 
     ///
-    /// Read a 16 bit integer from memory
-    ReadI16(ImmediateRef),
-
-    ///
-    /// Read a 32 bit integer from memory
-    ReadI32(ImmediateRef),
-
-    ///
-    /// Read a 64 bit integer from memory
-    ReadI64(ImmediateRef),
-
-    ///
-    /// Read a 32 bit float from memory
-    ReadF32(ImmediateRef),
-
-    ///
-    /// Read a 64 bit float from memory
-    ReadF64(ImmediateRef),
-
-    ///
-    /// Writes a 8 bit integer from memory
-    WriteI8(ImmediateRef),
-
-    ///
-    /// Writes a 16 bit integer from memory
-    WriteI16(ImmediateRef),
-
-    ///
-    /// Writes a 32 bit integer from memory
-    WriteI32(ImmediateRef),
-
-    ///
-    /// Writes a 64 bit integer from memory
-    WriteI64(ImmediateRef),
-
-    ///
-    /// Writes a 32 bit float from memory
-    WriteF32(ImmediateRef),
-
-    ///
-    /// Writes a 64 bit float from memory
-    WriteF64(ImmediateRef),
-
+    /// Wrtie a value of the provided type
+    Write(ImmediateRef, ImmediateRef, bool),
 
     ///
     /// Branch to the first block if the immediate is == 0; otherwise the second block
@@ -257,5 +216,9 @@ impl Instruction{
     pub fn assert_2_immediates(&self) -> (ImmediateRef, ImmediateRef){
         assert!(self.immediates().len() == 2, "Expected exactly 2 immediates, not {}",self.immediates().len());
         (self.immediates()[0], self.immediates()[1])
+    }
+
+    pub fn assert_no_immediates(&self){
+        assert!(self.immediates().len() == 0, "Expected no immediates, not {}", self.immediates().len());
     }
 }

@@ -15,3 +15,6 @@ members = [
     "corrosion-base",
     "corrosion-clif"
 ]
+
+[build.release]
+lto=true
